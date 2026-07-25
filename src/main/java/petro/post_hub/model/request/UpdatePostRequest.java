@@ -1,0 +1,20 @@
+package petro.post_hub.model.request;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class UpdatePostRequest {
+    @NotBlank(message = "title must be present")
+    @Size(min = 5, max = 50, message = "title must be from 5 to 50")
+    private String title;
+
+    @NotBlank(message = "content must be present")
+    @Size(min = 5, max = 100, message = "content must be from 5 to 100")
+    private String content;
+}
