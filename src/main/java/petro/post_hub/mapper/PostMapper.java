@@ -9,7 +9,6 @@ import petro.post_hub.model.entity.Post;
 import petro.post_hub.model.request.NewPostRequest;
 import petro.post_hub.model.response.CustomResponse;
 
-import java.awt.print.Pageable;
 
 @Mapper(
         componentModel = "string",
@@ -26,6 +25,6 @@ public interface PostMapper {
     @Mapping(target = "deleted", ignore = true)
     Post convertNewPostDtoToPost(NewPostRequest newPostRequest);
 
-    PostSearchDto convertPostToPostSearchDto(Pageable pageable);
+    PostSearchDto convertPostToPostSearchDto(Post post);
 
 }
