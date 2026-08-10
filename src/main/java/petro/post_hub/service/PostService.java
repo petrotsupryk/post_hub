@@ -16,7 +16,7 @@ public interface PostService {
 
     CustomResponse<PostDto> save(NewPostRequest newPostRequest, int userId);
 
-    CustomResponse<PostDto> updated(UpdatePostRequest updatePostRequest, int postId, int id);
+    CustomResponse<PostDto> updated(UpdatePostRequest updatePostRequest, int postId, int userId);
 
     void deleted(int id, int userId);
 

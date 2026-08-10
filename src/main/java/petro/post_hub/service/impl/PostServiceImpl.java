@@ -55,10 +55,10 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public CustomResponse<PostDto> updated(UpdatePostRequest updatePostRequest, int postId, int id) {
+    public CustomResponse<PostDto> updated(UpdatePostRequest updatePostRequest, int postId, int userId) {
         Post post = postRepository.findByIdAndDeletedFalse(postId).orElseThrow(() ->
                 new NotFoundException(ApiErrorMessage.POST_NOT_FOUND_BY_ID.getMessage(postId)));
-        accessValidator.validateAdminOrOwnerAccess(postId, id);
+        accessValidator.validateAdminOrOwnerAccess(post.getUser().getId(), userId);
         post.setTitle(updatePostRequest.getTitle());
         post.setContent(updatePostRequest.getContent());
         post.setUpdated(LocalDateTime.now());

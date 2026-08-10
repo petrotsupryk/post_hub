@@ -17,6 +17,7 @@ import petro.post_hub.model.constants.ApiErrorMessage;
 import petro.post_hub.model.entity.User;
 import petro.post_hub.model.exceptions.NotFoundException;
 import petro.post_hub.repository.UserRepository;
+import petro.post_hub.security.CustomUserDetails;
 import petro.post_hub.security.JwtTokenProvider;
 
 import java.io.IOException;
@@ -54,8 +55,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                         List<SimpleGrantedAuthority> authorities = jwtTokenProvider.getRoles(jwtToken).stream()
                                 .map(SimpleGrantedAuthority::new)
                                 .toList();
+                        CustomUserDetails customUserDetails=new CustomUserDetails(user,authorities);
                         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                                user, null, authorities
+                                customUserDetails, null, authorities
                         );
                         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                     }
