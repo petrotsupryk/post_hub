@@ -3,6 +3,7 @@ package petro.post_hub.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import petro.post_hub.mapper.PostMapper;
 import petro.post_hub.model.constants.ApiErrorMessage;
@@ -19,6 +20,7 @@ import petro.post_hub.model.response.CustomResponse;
 import petro.post_hub.model.response.PaginationResponse;
 import petro.post_hub.repository.PostRepository;
 import petro.post_hub.repository.UserRepository;
+import petro.post_hub.repository.criteria.PostSearchCriteria;
 import petro.post_hub.security.validation.AccessValidator;
 import petro.post_hub.service.PostService;
 
@@ -93,6 +95,17 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public CustomResponse<PaginationResponse<PostSearchDto>> findAllPostByPaginationAndParams(Pageable pageable, PostSearchRequest postSearchRequest) {
-        return null;
+        Specification<Post> specification = new PostSearchCriteria(postSearchRequest);
+        Page<PostSearchDto> posts = postRepository.findAll(specification, pageable).map(postMapper::convertPostToPostSearchDto);
+        PaginationResponse<PostSearchDto> paginationResponse = new PaginationResponse<>(
+                posts.getContent(),
+                new PaginationResponse.Pagination(
+                        posts.getTotalElements(),
+                        pageable.getPageSize(),
+                        pageable.getPageNumber() + 1,
+                        posts.getTotalPages()
+                )
+        );
+        return CustomResponse.success((paginationResponse));
     }
 }

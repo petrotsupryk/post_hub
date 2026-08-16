@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import petro.post_hub.model.dto.PostDto;
 import petro.post_hub.model.dto.PostSearchDto;
 import petro.post_hub.model.request.NewPostRequest;
+import petro.post_hub.model.request.PostSearchRequest;
 import petro.post_hub.model.request.UpdatePostRequest;
 import petro.post_hub.model.response.CustomResponse;
 import petro.post_hub.model.response.PaginationResponse;
@@ -41,19 +42,19 @@ public class PostController {
             responseCode = "200",
             description = "successful get post by id",
             content = @Content(mediaType = "application/json",
-            examples = @ExampleObject(value = """
-                    {
-                      "message": "success",
-                      "body": {
-                        "id": 3,
-                        "title": "weather",
-                        "content": "weather_of_Lviv",
-                        "created": "2026-08-10T20:26:37.063501",
-                        "updated": "2026-08-10T20:29:54.964453"
-                      },
-                      "success": true
-                    }
-                    """))
+                    examples = @ExampleObject(value = """
+                            {
+                              "message": "success",
+                              "body": {
+                                "id": 3,
+                                "title": "weather",
+                                "content": "weather_of_Lviv",
+                                "created": "2026-08-10T20:26:37.063501",
+                                "updated": "2026-08-10T20:29:54.964453"
+                              },
+                              "success": true
+                            }
+                            """))
     ))
     public ResponseEntity<CustomResponse<PostDto>> getById(@PathVariable int id) {
         CustomResponse<PostDto> response = postService.getById(id);
@@ -65,22 +66,22 @@ public class PostController {
             description = "save and return post")
     @ApiResponses(value =
     @ApiResponse(
-        responseCode = "200",
-        description = "successful save post",
-        content = @Content(mediaType = "application/json",
-        examples = @ExampleObject(value = """
-                {
-                  "message": "success",
-                  "body": {
-                    "id": 7,
-                    "title": "petro save new",
-                    "content": "save post",
-                    "created": "2026-08-10T20:48:28.1207867",
-                    "updated": "2026-08-10T20:48:28.1207867"
-                  },
-                  "success": true
-                }
-                """))
+            responseCode = "200",
+            description = "successful save post",
+            content = @Content(mediaType = "application/json",
+                    examples = @ExampleObject(value = """
+                            {
+                              "message": "success",
+                              "body": {
+                                "id": 7,
+                                "title": "petro save new",
+                                "content": "save post",
+                                "created": "2026-08-10T20:48:28.1207867",
+                                "updated": "2026-08-10T20:48:28.1207867"
+                              },
+                              "success": true
+                            }
+                            """))
     ))
     public ResponseEntity<CustomResponse<PostDto>> save(@Valid NewPostRequest newPostRequest,
                                                         @AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -93,22 +94,22 @@ public class PostController {
             description = "update and return post")
     @ApiResponses(value =
     @ApiResponse(
-           responseCode = "200",
+            responseCode = "200",
             description = "successful updated post",
             content = @Content(mediaType = "application/json",
-            examples = @ExampleObject(value = """
-                    {
-                      "message": "success",
-                      "body": {
-                        "id": 4,
-                        "title": "petro updated post",
-                        "content": "updated post",
-                        "created": "2026-08-10T20:34:22.599381",
-                        "updated": "2026-08-10T20:52:40.5873668"
-                      },
-                      "success": true
-                    }
-                    """))
+                    examples = @ExampleObject(value = """
+                            {
+                              "message": "success",
+                              "body": {
+                                "id": 4,
+                                "title": "petro updated post",
+                                "content": "updated post",
+                                "created": "2026-08-10T20:34:22.599381",
+                                "updated": "2026-08-10T20:52:40.5873668"
+                              },
+                              "success": true
+                            }
+                            """))
     ))
     public ResponseEntity<CustomResponse<PostDto>> updated(@Valid UpdatePostRequest updatePostRequest,
                                                            @AuthenticationPrincipal CustomUserDetails userDetails,
@@ -133,38 +134,38 @@ public class PostController {
             responseCode = "200",
             description = "successful get all posts",
             content = @Content(mediaType = "application/json",
-            examples = @ExampleObject(value = """
-                    {
-                      "message": "success",
-                      "body": {
-                        "content": [
-                          {
-                            "id": 2,
-                            "title": "post_info",
-                            "content": "news_of_Sambir",
-                            "created": "2026-08-10T20:25:19.907322",
-                            "updated": "2026-08-10T20:25:19.907322",
-                            "deleted": false
-                          },
-                          {
-                            "id": 3,
-                            "title": "weather",
-                            "content": "weather_of_Lviv",
-                            "created": "2026-08-10T20:26:37.063501",
-                            "updated": "2026-08-10T20:29:54.964453",
-                            "deleted": false
-                          }
-                        ],
-                        "pagination": {
-                          "total": 7,
-                          "limit": 2,
-                          "page": 1,
-                          "pages": 4
-                        }
-                      },
-                      "success": true
-                    }
-                    """))
+                    examples = @ExampleObject(value = """
+                            {
+                              "message": "success",
+                              "body": {
+                                "content": [
+                                  {
+                                    "id": 2,
+                                    "title": "post_info",
+                                    "content": "news_of_Sambir",
+                                    "created": "2026-08-10T20:25:19.907322",
+                                    "updated": "2026-08-10T20:25:19.907322",
+                                    "deleted": false
+                                  },
+                                  {
+                                    "id": 3,
+                                    "title": "weather",
+                                    "content": "weather_of_Lviv",
+                                    "created": "2026-08-10T20:26:37.063501",
+                                    "updated": "2026-08-10T20:29:54.964453",
+                                    "deleted": false
+                                  }
+                                ],
+                                "pagination": {
+                                  "total": 7,
+                                  "limit": 2,
+                                  "page": 1,
+                                  "pages": 4
+                                }
+                              },
+                              "success": true
+                            }
+                            """))
     ))
     public ResponseEntity<CustomResponse<PaginationResponse<PostSearchDto>>> findPostAllByPagination(
             @RequestParam(name = "page", defaultValue = "0") int page,
@@ -172,6 +173,51 @@ public class PostController {
     ) {
         Pageable pageable = PageRequest.of(page, limit);
         CustomResponse<PaginationResponse<PostSearchDto>> response = postService.findAllPostByPagination(pageable);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/search")
+    @Operation(summary = "get search",
+            description = "get all with pagination and param")
+    @ApiResponses(value =
+    @ApiResponse(
+            responseCode = "200",
+            description = "successful all post with pagination and param",
+            content = @Content(mediaType = "application/json",
+                    examples = @ExampleObject(value = """
+                            {
+                              "message": "success",
+                              "body": {
+                                "content": [
+                                  {
+                                    "id": 1,
+                                    "title": "post_news",
+                                    "content": "news_of_Lviv",
+                                    "created": "2026-08-10T20:23:25.291847",
+                                    "updated": "2026-08-10T20:23:25.291847",
+                                    "deleted": true
+                                  }
+                                ],
+                                "pagination": {
+                                  "total": 1,
+                                  "limit": 10,
+                                  "page": 1,
+                                  "pages": 1
+                                }
+                              },
+                              "success": true
+                            }
+                            """)
+            )
+
+    ))
+    public ResponseEntity<CustomResponse<PaginationResponse<PostSearchDto>>> findPostAllByPaginationWithParams(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "limit", defaultValue = "10") int limit,
+            @RequestBody @Valid PostSearchRequest postSearchRequest
+    ) {
+        Pageable pageable = PageRequest.of(page, limit);
+        CustomResponse<PaginationResponse<PostSearchDto>> response = postService.findAllPostByPaginationAndParams(pageable, postSearchRequest);
         return ResponseEntity.ok(response);
     }
 }
