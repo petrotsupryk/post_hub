@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "posts")
-public class Post implements Serializable {
+public class Post {
     public static final String ID_FIELD_NAME = "id";
     public static final String TITLE_FIELD_NAME = "title";
     public static final String CONTENT_FIELD_NAME = "content";
