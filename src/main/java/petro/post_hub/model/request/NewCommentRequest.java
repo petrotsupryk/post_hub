@@ -13,6 +13,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class NewCommentRequest implements Serializable {
 
+
     @NotBlank(message = "postId must be present")
     private int postId;
 
