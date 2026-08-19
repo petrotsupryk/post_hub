@@ -3,11 +3,11 @@ package petro.post_hub.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
-import petro.post_hub.model.entity.Comments;
+import petro.post_hub.model.entity.Comment;
 
 import java.util.Optional;
 
 @Repository
-public interface CommentRepository extends JpaRepository<Comments, Integer>, JpaSpecificationExecutor<Comments> {
-    Optional<Comments> findByIdAndDeletedFalse(int id);
+public interface CommentRepository extends JpaRepository<Comment, Integer>, JpaSpecificationExecutor<Comment> {
+    Optional<Comment> findByIdAndDeletedFalse(int id);
 }
