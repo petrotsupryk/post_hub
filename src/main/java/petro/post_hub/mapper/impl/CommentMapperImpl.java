@@ -22,7 +22,9 @@ public class CommentMapperImpl implements CommentMapper {
     public Comment convertNewCommentRequestToComment(NewCommentRequest newCommentRequest, User user, Post post) {
         Comment comment = new Comment();
         comment.setPost(post);
+        comment.setUser(user);
         comment.setMessage(newCommentRequest.getMessage());
+
         return comment;
     }
 
