@@ -9,7 +9,7 @@ import petro.post_hub.model.request.UpdateCommentRequest;
 import petro.post_hub.model.response.CustomResponse;
 import petro.post_hub.model.response.PaginationResponse;
 
-public interface CommentsService {
+public interface CommentService {
     CustomResponse<CommentDto> getCommentById(int id);
 
     CustomResponse<CommentDto> createComment(NewCommentRequest newCommentRequest, int userId);

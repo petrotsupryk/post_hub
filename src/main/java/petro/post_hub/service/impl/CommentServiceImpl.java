@@ -23,11 +23,11 @@ import petro.post_hub.repository.PostRepository;
 import petro.post_hub.repository.UserRepository;
 import petro.post_hub.repository.criteria.CommentSearchCriteria;
 import petro.post_hub.security.validation.AccessValidator;
-import petro.post_hub.service.CommentsService;
+import petro.post_hub.service.CommentService;
 
 @Service
 @AllArgsConstructor
-public class CommentServiceImpl implements CommentsService {
+public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
     private final UserRepository userRepository;

@@ -28,7 +28,6 @@ import petro.post_hub.service.PostService;
 @RequiredArgsConstructor
 @RestController
 @Validated
-@Slf4j
 @RequestMapping("/post")
 @Tag(name = "post", description = "post methods")
 public class PostController {
@@ -83,7 +82,7 @@ public class PostController {
                             }
                             """))
     ))
-    public ResponseEntity<CustomResponse<PostDto>> save(@Valid NewPostRequest newPostRequest,
+    public ResponseEntity<CustomResponse<PostDto>> save(@Valid @RequestBody NewPostRequest newPostRequest,
                                                         @AuthenticationPrincipal CustomUserDetails userDetails) {
         CustomResponse<PostDto> response = postService.save(newPostRequest, userDetails.getUser().getId());
         return ResponseEntity.ok(response);
