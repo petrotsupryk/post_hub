@@ -187,6 +187,7 @@ public class PostServiceTest {
                 .validateAdminOrOwnerAccess(
                         testPost.getUser().getId(),
                         testUser.getId()
+
                 );
         AccessDeniedException exception = assertThrows(AccessDeniedException.class, () ->
                 postServiceImpl.updated(request, 1, testUser.getId()));
