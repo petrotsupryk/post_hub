@@ -14,12 +14,16 @@ import petro.post_hub.model.entity.User;
 import petro.post_hub.model.exceptions.DataExistsException;
 import petro.post_hub.model.exceptions.NotFoundException;
 import petro.post_hub.model.request.NewPostRequest;
+import petro.post_hub.model.request.UpdatePostRequest;
 import petro.post_hub.repository.PostRepository;
 import petro.post_hub.repository.UserRepository;
 import petro.post_hub.security.validation.AccessValidator;
 import petro.post_hub.service.impl.PostServiceImpl;
 
+import org.springframework.security.access.AccessDeniedException;
+
 import java.util.Optional;
+
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -136,7 +140,62 @@ public class PostServiceTest {
         verify(postMapper, never()).convertNewPostDtoToPost(request);
         verify(postRepository, never()).save(any());
         verify(postMapper, never()).convertPostToPostDto(testPost);
-
-
     }
+
+    @Test
+    void updated_Ok() {
+        UpdatePostRequest request = new UpdatePostRequest("new title", "new content");
+        when(postRepository.findByIdAndDeletedFalse(1)).thenReturn(Optional.of(testPost));
+        doNothing().when(accessValidator).validateAdminOrOwnerAccess(testPost.getUser().getId(), testUser.getId());
+        when(postRepository.save(testPost)).thenReturn(testPost);
+        when(postMapper.convertPostToPostDto(testPost)).thenReturn(testPostDto);
+
+        PostDto result = postServiceImpl.updated(request, 1, testUser.getId()).getBody();
+
+        assertNotNull(result);
+
+        assertEquals(testPostDto.getId(), result.getId());
+        assertEquals(testPostDto.getTitle(), result.getTitle());
+        assertEquals(testPostDto.getContent(), result.getContent());
+
+        verify(postRepository, times(1)).findByIdAndDeletedFalse(1);
+        verify(accessValidator, times(1)).validateAdminOrOwnerAccess(testPost.getUser().getId(), testUser.getId());
+        verify(postRepository, times(1)).save(testPost);
+        verify(postMapper, times(1)).convertPostToPostDto(testPost);
+    }
+
+    @Test
+    void Updated_NotFound_NotFoundException() {
+        UpdatePostRequest request = new UpdatePostRequest("new title", "new content");
+        when(postRepository.findByIdAndDeletedFalse(1)).thenReturn(Optional.empty());
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> postServiceImpl.
+                updated(request, 1, testUser.getId()));
+        assertEquals(ApiErrorMessage.POST_NOT_FOUND_BY_ID.getMessage(1), exception.getMessage());
+
+        verify(postRepository, times(1)).findByIdAndDeletedFalse(1);
+        verify(accessValidator, never()).validateAdminOrOwnerAccess(testPost.getUser().getId(), testUser.getId());
+        verify(postRepository, never()).save(testPost);
+        verify(postMapper, never()).convertPostToPostDto(testPost);
+    }
+
+    @Test
+    void Updated_validateAdminOrOwnerAccess_AccessDeniedException() {
+        UpdatePostRequest request = new UpdatePostRequest("new title", "new content");
+        when(postRepository.findByIdAndDeletedFalse(1)).thenReturn(Optional.of(testPost));
+        doThrow(new AccessDeniedException(ApiErrorMessage.DONT_HAVE_ACCESS.getMessage()))
+                .when(accessValidator)
+                .validateAdminOrOwnerAccess(
+                        testPost.getUser().getId(),
+                        testUser.getId()
+                );
+        AccessDeniedException exception = assertThrows(AccessDeniedException.class, () ->
+                postServiceImpl.updated(request, 1, testUser.getId()));
+        assertEquals(ApiErrorMessage.DONT_HAVE_ACCESS.getMessage(1), exception.getMessage());
+
+        verify(postRepository, times(1)).findByIdAndDeletedFalse(1);
+        verify(accessValidator, times(1)).validateAdminOrOwnerAccess(testPost.getUser().getId(), testUser.getId());
+        verify(postRepository, never()).save(testPost);
+        verify(postMapper, never()).convertPostToPostDto(testPost);
+    }
+
 }
