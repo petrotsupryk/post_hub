@@ -229,7 +229,7 @@ public class PostServiceTest {
     }
 
     @Test
-    void validateAdminOrOwnerAccess_AccessDeniedException() {
+    void deleted_ValidateAdminOrOwnerAccess_AccessDeniedException() {
         when(postRepository.findByIdAndDeletedFalse(1)).thenReturn(Optional.of(testPost));
         doThrow(new AccessDeniedException(ApiErrorMessage.DONT_HAVE_ACCESS.getMessage()))
                 .when(accessValidator).validateAdminOrOwnerAccess(testPost.getUser().getId(), testUser.getId());
