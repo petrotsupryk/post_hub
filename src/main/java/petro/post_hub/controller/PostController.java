@@ -110,7 +110,7 @@ public class PostController {
                             }
                             """))
     ))
-    public ResponseEntity<CustomResponse<PostDto>> updated(@Valid UpdatePostRequest updatePostRequest,
+    public ResponseEntity<CustomResponse<PostDto>> updated(@Valid @RequestBody UpdatePostRequest updatePostRequest,
                                                            @AuthenticationPrincipal CustomUserDetails userDetails,
                                                            @PathVariable int id) {
         CustomResponse<PostDto> response = postService.updated(updatePostRequest, id, userDetails.getUser().getId());
