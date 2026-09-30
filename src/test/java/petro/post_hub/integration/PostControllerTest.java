@@ -25,8 +25,10 @@ import petro.post_hub.SecurityApplication;
 import petro.post_hub.model.dto.PostDto;
 import petro.post_hub.model.entity.Post;
 import petro.post_hub.model.entity.User;
+import petro.post_hub.model.enums.PostSortField;
 import petro.post_hub.model.exceptions.InvalidDataException;
 import petro.post_hub.model.request.NewPostRequest;
+import petro.post_hub.model.request.PostSearchRequest;
 import petro.post_hub.model.request.UpdatePostRequest;
 import petro.post_hub.model.response.CustomResponse;
 import petro.post_hub.repository.UserRepository;
@@ -167,6 +169,123 @@ public class PostControllerTest {
         assertNotNull(postDto);
         assertEquals(request.getTitle(), postDto.getTitle());
         assertEquals(request.getContent(), postDto.getContent());
+    }
+
+    @Test
+    @Transactional
+    void updatedPost_NotFoundPost_404() throws Exception {
+        UpdatePostRequest request = new UpdatePostRequest("weather", "content of weather");
+        mockMvc.perform(
+                        MockMvcRequestBuilders
+                                .put("/post/updated/-1")
+                                .header("Authorization", userJwt)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request))
+                )
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
+    @Transactional
+    void updatedPost_DontHaveAccess_403() throws Exception {
+        UpdatePostRequest request = new UpdatePostRequest("weather", "content of weather");
+        mockMvc.perform(
+                        MockMvcRequestBuilders
+                                .put("/post/updated/5")
+                                .header("Authorization", userJwt)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request))
+                )
+                .andExpect(MockMvcResultMatchers.status().isForbidden());
+    }
+
+    @Test
+    @Transactional
+    void updatedPost_adminById_Ok() throws Exception {
+        UpdatePostRequest request = new UpdatePostRequest("weather", "content of weather");
+        MvcResult result = mockMvc.perform(
+                        MockMvcRequestBuilders
+                                .put("/post/updated/2")
+                                .header("Authorization", adminJwt)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request))
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+
+        CustomResponse<PostDto> response = convertResponseToPostDto(result.getResponse().getContentAsByteArray());
+        assertTrue(response.isSuccess());
+
+        PostDto postDto = Objects.nonNull(response.getBody()) ? response.getBody() : null;
+        assertNotNull(postDto);
+        assertEquals(request.getTitle(), postDto.getTitle());
+        assertEquals(request.getContent(), postDto.getContent());
+    }
+
+    @Test
+    @Transactional
+    void deletedPost_Ok() throws Exception {
+        mockMvc.perform(
+                        MockMvcRequestBuilders
+                                .delete("/post/2")
+                                .header("Authorization", userJwt)
+                                .accept(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    @Transactional
+    void deletedPost_NotFound_404() throws Exception {
+        mockMvc.perform(
+                        MockMvcRequestBuilders
+                                .delete("/post/-1")
+                                .header("Authorization", userJwt)
+                                .accept(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
+    @Transactional
+    void deletedPost_DontHaveAccess_403() throws Exception {
+        mockMvc.perform(
+                        MockMvcRequestBuilders
+                                .delete("/post/5")
+                                .header("Authorization", userJwt)
+                                .accept(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(MockMvcResultMatchers.status().isForbidden());
+    }
+
+    @Test
+    @Transactional
+    void deletedPost_adminById_Ok() throws Exception {
+        mockMvc.perform(
+                        MockMvcRequestBuilders
+                                .delete("/post/5")
+                                .header("Authorization", adminJwt)
+                                .accept(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    @Transactional
+    void getAll_Ok() throws Exception {
+        PostSearchRequest request = new PostSearchRequest("", "", false, "", PostSortField.CONTENT);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders
+                                .post("/post/search")
+                                .header("Authorization", userJwt)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request))
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     private CustomResponse<PostDto> convertResponseToPostDto(byte[] content) throws IOException {
