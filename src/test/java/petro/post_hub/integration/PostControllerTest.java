@@ -97,7 +97,6 @@ public class PostControllerTest {
         assertNotNull(postDto);
         assertEquals("post_info", postDto.getTitle());
         assertEquals("news_of_Sambir", postDto.getContent());
-
     }
 
     @Test
@@ -274,7 +273,7 @@ public class PostControllerTest {
 
     @Test
     @Transactional
-    void getAll_Ok() throws Exception {
+    void getAllPost_Ok() throws Exception {
         PostSearchRequest request = new PostSearchRequest("", "", false, "", PostSortField.CONTENT);
 
         mockMvc.perform(
