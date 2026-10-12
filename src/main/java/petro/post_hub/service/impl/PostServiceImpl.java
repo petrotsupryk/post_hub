@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import petro.post_hub.kafka.service.KafkaMessageService;
 import petro.post_hub.mapper.PostMapper;
 import petro.post_hub.model.constants.ApiErrorMessage;
 import petro.post_hub.model.dto.PostDto;
@@ -33,12 +34,14 @@ public class PostServiceImpl implements PostService {
     private final PostMapper postMapper;
     private final UserRepository userRepository;
     private final AccessValidator accessValidator;
+    private final KafkaMessageService kafkaMessageService;
 
     @Override
     public CustomResponse<PostDto> getById(int id) {
         Post post = postRepository.findByIdAndDeletedFalse(id).orElseThrow(() ->
                 new NotFoundException(ApiErrorMessage.POST_NOT_FOUND_BY_ID.getMessage(id)));
         PostDto postDto = postMapper.convertPostToPostDto(post);
+        kafkaMessageService.sendPostGetLog(id);
         return CustomResponse.success(postDto);
     }
 
@@ -53,6 +56,7 @@ public class PostServiceImpl implements PostService {
         post.setUser(user);
         post = postRepository.save(post);
         PostDto postDto = postMapper.convertPostToPostDto(post);
+        kafkaMessageService.sendPostCreatedLog(post.getId(), userId);
         return CustomResponse.success(postDto);
     }
 
@@ -66,6 +70,7 @@ public class PostServiceImpl implements PostService {
         post.setUpdated(LocalDateTime.now());
         post = postRepository.save(post);
         PostDto postDto = postMapper.convertPostToPostDto(post);
+        kafkaMessageService.sendPostUpdateLog(postId, userId);
         return CustomResponse.success(postDto);
     }
 
@@ -76,6 +81,7 @@ public class PostServiceImpl implements PostService {
         accessValidator.validateAdminOrOwnerAccess(post.getUser().getId(), userId);
         post.setDeleted(true);
         postRepository.save(post);
+        kafkaMessageService.sendPostDeleteLog(post.getId(), userId);
     }
 
     @Override
@@ -90,6 +96,7 @@ public class PostServiceImpl implements PostService {
                         posts.getTotalPages()
                 )
         );
+        kafkaMessageService.findPostByPaginationLog();
         return CustomResponse.success(paginationResponse);
     }
 
@@ -106,6 +113,7 @@ public class PostServiceImpl implements PostService {
                         posts.getTotalPages()
                 )
         );
+        kafkaMessageService.findPostByPaginationWithParamLog();
         return CustomResponse.success((paginationResponse));
     }
 }
